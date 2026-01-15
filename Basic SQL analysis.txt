@@ -1,0 +1,81 @@
+select * from pizzas ;  --96
+
+select * from pizza_types ;--32
+
+
+select * from orders ;---21,350
+
+select * from order_details ;---48,620
+
+
+----BASIC SQL QUESTIONS
+----1.Retrieve the total number of orders placed.
+
+select count(*)
+from orders  ;  --21,350
+
+
+----2.Calculate the total revenue generated from pizza sales.
+
+select round(sum(quantity*price),2) as total_revenue
+from order_details od
+left join pizzas p on p.pizza_id = od.pizza_id ;  ---8,17,860.05
+
+
+---3.Identify the highest-priced pizza.
+
+select name
+from pizzas p
+left join pizza_types pt on pt.pizza_type_id=p.pizza_type_id
+where price = ( select max(price)
+from pizzas p ) ;
+
+---The Greek Pizza
+
+
+
+
+-----4.Identify the most common pizza size ordered.
+
+select size,sum(quantity) as qty
+ from order_details od
+left join pizzas p on p.pizza_id=od.pizza_id 
+group by size 
+order by  qty desc
+limit 1;
+
+
+-----5.rank the pizza sizes ordered based on quantity
+with cte as (
+select size, sum(quantity) as qty
+ from order_details od
+inner join pizzas p on p.pizza_id=od.pizza_id  
+group by size )
+
+select *,
+row_number() over(order by qty desc) as rn
+ from cte  ;
+
+
+
+---6.List the top 5 most ordered pizza types along with their quantities.
+
+with cte as (
+select p.pizza_type_id pizza_type_id ,count(order_id) as tot_orders , sum(quantity) as tot_qty
+from order_details od   
+join pizzas p on p.pizza_id = od.pizza_id  
+join pizza_types pt on pt.pizza_type_id=p.pizza_type_id  
+group by 1 )
+
+select pizza_type_id, tot_qty,
+row_number() over(order by tot_orders desc) as rn
+from cte 
+qualify rn <=5  ;
+
+
+
+
+
+
+
+
