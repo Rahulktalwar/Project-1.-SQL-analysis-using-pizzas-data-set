@@ -74,6 +74,15 @@ qualify rn <=5  ;
 
 
 
+----7. Join the necessary tables to find the total quantity of each pizza category ordered.
+SELECT category, sum(quantity) as tot_qty
+FROM order_details od   
+join pizzas p on p.pizza_id = od.pizza_id  
+join pizza_types pt on pt.pizza_type_id=p.pizza_type_id  
+GROUP by 1  ;
+
+
+
 
 
 
