@@ -1,0 +1,42 @@
+------INTERMEDIATE 
+
+
+select * from pizzas ;  --96
+
+select * from pizza_types ;--32
+
+
+select * from orders ;---21,350
+
+select * from order_details ;---48,620
+
+
+----7. Join the necessary tables to find the total quantity of each pizza category ordered.
+SELECT category, sum(quantity) as tot_qty
+FROM order_details od   
+join pizzas p on p.pizza_id = od.pizza_id  
+join pizza_types pt on pt.pizza_type_id=p.pizza_type_id  
+GROUP by 1  ;
+
+
+
+--8. Group the orders by date and calculate the average number of pizzas ordered per day.
+SELECT date, avg(quantity) as avg_pizzas_ordered
+FROM orders o
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY date  ;
+
+
+with cte as (
+SELECT date, count(o.order_id) as pizza_count
+FROM orders O
+join order_details od on o.order_id=od.order_id
+join pizzas p on p.pizza_id=od.pizza_id
+join pizza_types pt on pt.pizza_type_id=p.pizza_type_id  
+group by 1
+)  
+
+
+select date, avg(pizza_count)
+from cte
+group by 1    ;
